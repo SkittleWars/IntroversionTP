@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draggable Images</title>
+    <style>
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden; /* Prevents images from being dragged outside */
+            background-color: black; /* Background color for visibility */
+        }
+
+        .container img {
+            width: 750px; /* Set desired width */
+            height: 750px; /* Set desired height */
+            margin: 5px;
+            position: absolute; /* Allow images to be positioned absolutely */
+            cursor: pointer; /* Change cursor to pointer */
+        }
+    </style>
+</head>
+<body onload="move()">
+
+    <div class="container">
+        <img src="piece 1.png" id="Image1" alt="Image 1" />
+        <img src="piece 2.png" id="Image2" alt="Image 2" />
+        <img src="piece 3.png" id="Image3" alt="Image 3" />
+    </div>
+
+    <script>
+        let chooseElement = null;
+        let offsetX = 0;
+        let offsetY = 0;
+
+        function move() {
+            const elements = document.querySelectorAll(".container img");
+
+            elements.forEach(element => {
+                element.addEventListener("mousedown", (e) => {
+                    // Check if the click is within the bounds of the image
+                    const rect = element.getBoundingClientRect();
+                    if (e.clientX >= rect.left && e.clientX <= rect.right &&
+                        e.clientY >= rect.top && e.clientY <= rect.bottom) {
+                        
+                        chooseElement = element;
+
+                        // Calculate offsets
+                        offsetX = e.clientX - rect.left;
+                        offsetY = e.clientY - rect.top;
+
+                        // Add mousemove event to the document
+                        document.onmousemove = (e) => {
+                            if (chooseElement) {
+                                chooseElement.style.left = e.pageX - offsetX + "px";
+                                chooseElement.style.top = e.pageY - offsetY + "px";
+                            }
+                        };
+
+                        // Prevent text selection while dragging
+                        e.preventDefault();
+                    }
+                });
+            });
+
+            // Clear selection on mouse up
+            document.onmouseup = function() {
+                chooseElement = null;
+                document.onmousemove = null; // Remove mousemove event
+            };
+        }
+    </script>
+</body>
+</html>
